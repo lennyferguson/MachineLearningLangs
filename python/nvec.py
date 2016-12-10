@@ -12,6 +12,35 @@ class MlVec(object):
         self.dim = len(self.data)
         self.type = type
 
+        # Mapping Function
+    def map(self,fn,rhs = None):
+        ans = MlVec.of_size(self.dim,self.type)
+        if rhs is None:
+            for i in range(0,self.dim):
+                ans[i] = fn(self[i])
+        else:
+            if not isinstance(rhs,MlVec):
+                for i in range(0,self.dim):
+                    ans[i] = fn(self[i],rhs)
+            else:
+                for i in range(0,self.dim):
+                    ans[i] = fn(self[i],rhs[i])
+        return ans
+
+    # Fold Function
+    def fold(self,fn,rhs = None, accum = 0):
+        if rhs is None:
+            for i in range(0, self.dim):
+                accum = fn(self[i],accum)
+        else:
+            if not isinstance(rhs,MlVec):
+                for i in range(0, self.dim):
+                    accum = fn(self[i],rhs,accum)
+            else:
+                for i in range(0, self.dim):
+                    accum = fn(self[i],rhs[i],accum)
+        return accum
+
     # Create an empty MlVec initialized to Zero
     @classmethod
     def of_size(cls,size,type = 'd'):
@@ -60,35 +89,6 @@ class MlVec(object):
 
     def __ne__ (self,rhs):
         return not (self == rhs)
-
-    # Mapping Function
-    def map(self,fn,rhs = None):
-        ans = MlVec.of_size(self.dim,self.type)
-        if rhs is None:
-            for i in range(0,self.dim):
-                ans[i] = fn(self[i])
-        else:
-            if not isinstance(rhs,MlVec):
-                for i in range(0,self.dim):
-                    ans[i] = fn(self[i],rhs)
-            else:
-                for i in range(0,self.dim):
-                    ans[i] = fn(self[i],rhs[i])
-        return ans
-
-    # Fold Function
-    def fold(self,fn,rhs = None, accum = 0):
-        if rhs is None:
-            for i in range(0, self.dim):
-                accum = fn(self[i],accum)
-        else:
-            if not isinstance(rhs,MlVec):
-                for i in range(0, self.dim):
-                    accum = fn(self[i],rhs,accum)
-            else:
-                for i in range(0, self.dim):
-                    accum = fn(self[i],rhs[i],accum)
-        return accum
 
 # Testing Functions
 a = MlVec([1,1,1,1])
