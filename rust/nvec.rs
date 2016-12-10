@@ -148,14 +148,14 @@ fn main() {
 
     let dot_vec = {
         let w = &(&v + &v) + &v;
-        w.dot(&w) * &v
+        w.dot(&w) * &v 
     };
-    assert!(dot_vec == MlVec::new(vec!(27.0,27.0,27.0)));
 
+    assert!(dot_vec == MlVec::new(vec!(27.0,27.0,27.0)));
     
     /* Example of 'splitting' an MlVec
        using 3 different approaches. */
-    let split = |val| {
+    let split1 = |val| {
         match val {
              0.0 ...  5.0 => 0.0,
              5.0 ... 10.0 => 1.0,
@@ -173,20 +173,20 @@ fn main() {
     let c = 10.0;
     let d = 15.0;
 
-    let split2 = move |val| {
+    let split2 = |val| {
         if      bound(a,b,val) {0.0}
         else if bound(b,c,val) {1.0}
         else if bound(c,d,val) {2.0}
         else                   {3.0} 
     };
 
-    let r_a:Vec<f64> = vec!(0.0,  5.0, 10.0);
-    let r_b:Vec<f64> = vec!(5.0, 10.0, 15.0);
+    let r_a:Vec<f64> = vec!(a,b,c);
+    let r_b:Vec<f64> = vec!(b,c,d);
 
-    let split3 = move |val:f64| {
+    let split3 = |val:f64| {
         let mut num = 0.0;
         for i in 0..r_a.len() {
-            if val > r_a[i] && val < r_b[i] 
+            if bound(r_a[i],r_b[i],val) 
                 { return num; }
             else 
                 { num += 1.0; }
@@ -198,7 +198,7 @@ fn main() {
        using functions of different forms apply the same transformation. */
     let test = MlVec::new(vec!(27.24,14.1111,2.79,7.83,9.853));
     let expected = MlVec::new(vec!(3.0,2.0,0.0,1.0,1.0));
-    assert!(test.map(split)  == expected);
+    assert!(test.map(split1)  == expected);
     assert!(test.map(split2) == expected);
     assert!(test.map(split3) == expected);
     println!("Tests Passed!");
