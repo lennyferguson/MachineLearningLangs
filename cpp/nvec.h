@@ -5,6 +5,7 @@
 #include <math.h>
 #include <functional>
 #include <iostream>
+#include <initializer_list>
 
 using namespace std;
 
@@ -31,7 +32,7 @@ namespace ML {
     template <typename U, typename... Us>
     vector<U> vec(U first, Us... rest) {
       vector<U> v;
-      auto r = vec<U>(rest...);
+      auto r = vec(rest...);
       v.push_back(first);
       v.insert(v.end(), r.begin(), r.end());
       return v;
@@ -73,6 +74,10 @@ namespace ML {
         data = vector<T>(size);
         memcpy(data, d, size * sizeof(T));
         dim = size;
+      }
+
+      MlVec(initializer_list<T> l) : data(l) {
+        dim = l.size();
       }
 
       /* Higher Order Functions */

@@ -7,8 +7,11 @@ using namespace ML;
 
 /* Testing Functions */
 int main() {
+  // Use Variadic Constructor!
   MlVecD a(1.0,1.0,1.0,1.0);
-  MlVecD b(2.0,3.0,4.0,5.0);
+
+  // Or use Initialize List!
+  MlVecD b = { 2.0, 3.0, 4.0, 5.0 };
 
   assert(a == a && b == b);
   assert(a != b && b != a);

@@ -132,25 +132,39 @@ impl<'a> Div<f64> for &'a MlVec {
 fn main() {
     let v = MlVec::new(vec!(1.0,1.0,1.0));
     let u = MlVec::new(vec!(1.0,2.0,3.0));
+
+    // Test Comparison
     assert!(v == v);
     assert!(v != u);
+
+    // Test Add
     assert!(&v + &u == MlVec::new(vec!(2.0,3.0,4.0)));
     assert!(&v + &u == v.add(&u));
+
+    // Test Subtract
+    assert!(&v - 1.0 == MlVec::new(vec!(0.0,0.0,0.0)));
     assert!(&u - &v == MlVec::new(vec!(0.0,1.0,2.0)));
+
+    // Test Multiply
     assert!(&v * 2.0 == MlVec::new(vec!(2.0,2.0,2.0)));
     assert!(&u * &u == MlVec::new(vec!(1.0,4.0,9.0)));
+
+    // Test Divide
     assert!(&u / &u == MlVec::new(vec!(1.0,1.0,1.0)));
     assert!(&v / 2.0 == MlVec::new(vec!(0.5,0.5,0.5)));
+    
+    // Test Dot Product
     assert!(v.dot(&v) == 3.0);
     assert!(v.dot(&(&v + 1.0)) == 6.0);
-    assert!(&v - 1.0 == MlVec::new(vec!(0.0,0.0,0.0)));
+    
+    // Test Fold on MlVec
     assert!(v.fold(|a,b| {a + b}, 0.0) == 3.0);
 
+    // Test Left Sided Scalar Multiply
     let dot_vec = {
         let w = &(&v + &v) + &v;
         w.dot(&w) * &v 
     };
-
     assert!(dot_vec == MlVec::new(vec!(27.0,27.0,27.0)));
     
     /* Example of 'splitting' an MlVec
@@ -164,9 +178,7 @@ fn main() {
         }
     };
 
-    let bound = |a,b,c| {
-        c > a && c < b
-    };
+    let bound = |a,b,c| { c > a && c < b };
 
     let a =  0.0;
     let b =  5.0;
@@ -177,7 +189,7 @@ fn main() {
         if      bound(a,b,val) {0.0}
         else if bound(b,c,val) {1.0}
         else if bound(c,d,val) {2.0}
-        else                   {3.0} 
+        else                   {3.0}
     };
 
     let r_a:Vec<f64> = vec!(a,b,c);
@@ -196,10 +208,12 @@ fn main() {
 
     /* Example use of Map function to discretize a continuous valued vector
        using functions of different forms apply the same transformation. */
-    let test = MlVec::new(vec!(27.24,14.1111,2.79,7.83,9.853));
+    let test     = MlVec::new(vec!(27.24,14.1111,2.79,7.83,9.853));
     let expected = MlVec::new(vec!(3.0,2.0,0.0,1.0,1.0));
-    assert!(test.map(split1)  == expected);
+
+    assert!(test.map(split1) == expected);
     assert!(test.map(split2) == expected);
     assert!(test.map(split3) == expected);
+
     println!("Tests Passed!");
 }
