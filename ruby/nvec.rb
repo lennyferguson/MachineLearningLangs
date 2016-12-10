@@ -32,16 +32,16 @@ class MlVec
   def fold(fn, other = nil, default = 0)
     if other
       if other.is_a? Numeric
-        (0...@dim).zip(@data).each() do |index,val|
+        @data.each() do |val|
           default = fn.call(val,other,default)
         end
       else
-        (0...@dim).zip(@data,other).each() do |index,a,b|
+        @data.zip(other).each() do |a,b|
           default = fn.call(a,b,default)
         end
       end
     else
-      (0...@dim).zip(@data).each() do |index,val|
+      @data.each() do |val|
         default = fn.call(val,default)
       end
     end

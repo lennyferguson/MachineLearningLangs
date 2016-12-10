@@ -3,7 +3,7 @@ package ml.linalg;
 import java.util.List;
 import java.util.function.Function;
 
-// TODO : Write MlVec class in Java
+// Java MlVec class implemented for type 'Double'
 public class MlVec {
 
     @FunctionalInterface

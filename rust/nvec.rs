@@ -30,7 +30,7 @@ impl MlVec {
     fn map<F:Fn(f64)->f64> (&self,f:F) -> Self {
         let mut ans = MlVec{ data : vec![0f64;self.len()] };
         for i in 0..self.len() {
-            ans[i] = f(self.data[i])
+            ans[i] = f(self.data[i]);
         }
         ans
     }
@@ -38,12 +38,12 @@ impl MlVec {
     fn map2<F:Fn(f64,f64)->f64> (&self, rhs:&Self, f:F) -> Self {
         let mut ans = MlVec{ data: vec![0f64;self.len()] };
         for i in 0..self.len() {
-            ans[i] = f(self.data[i],rhs[i])
+            ans[i] = f(self.data[i],rhs[i]);
         }
         ans
     }
 
-    // Arithmatic Operations
+    // Arithmetic Operations
     fn add(&self,rhs:&Self) -> Self {
         self.map2(rhs, |a,b| { a + b } )
     }
@@ -113,6 +113,11 @@ impl<'a> Mul<f64> for &'a MlVec {
     fn mul(self,rhs:f64) -> MlVec  { self.scalar_mult(rhs) }
 }
 
+impl<'a> Mul<&'a MlVec> for f64 {
+    type Output = MlVec;
+    fn mul(self,rhs:&'a MlVec) -> MlVec  { rhs.scalar_mult(self) }
+}
+
 impl<'a> Div<&'a MlVec> for &'a MlVec {
     type Output = MlVec;
     fn div(self,rhs: Self) -> MlVec { self.div(rhs) }
@@ -140,9 +145,16 @@ fn main() {
     assert!(v.dot(&(&v + 1.0)) == 6.0);
     assert!(&v - 1.0 == MlVec::new(vec!(0.0,0.0,0.0)));
     assert!(v.fold(|a,b| {a + b}, 0.0) == 3.0);
+
+    let dot_vec = {
+        let w = &(&v + &v) + &v;
+        w.dot(&w) * &v
+    };
+    assert!(dot_vec == MlVec::new(vec!(27.0,27.0,27.0)));
+
     
-    /* Example of 'splitting' a MlVec using a function 
-       using 2 different approaches. */
+    /* Example of 'splitting' an MlVec
+       using 3 different approaches. */
     let split = |val| {
         match val {
              0.0 ...  5.0 => 0.0,
@@ -182,8 +194,8 @@ fn main() {
         num
     };
 
-    // In this example, we have a Vector with 'continuous' values
-    // that we wish to discretize with a 'splitting' function. 
+    /* Example use of Map function to discretize a continuous valued vector
+       using functions of different forms apply the same transformation. */
     let test = MlVec::new(vec!(27.24,14.1111,2.79,7.83,9.853));
     let expected = MlVec::new(vec!(3.0,2.0,0.0,1.0,1.0));
     assert!(test.map(split)  == expected);
