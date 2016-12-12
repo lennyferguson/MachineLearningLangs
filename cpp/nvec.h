@@ -6,6 +6,7 @@
 #include <functional>
 #include <iostream>
 #include <initializer_list>
+#include <cassert>
 
 using namespace std;
 
@@ -89,6 +90,7 @@ namespace ML {
       }
 
       Self map(const Self &rhs, const Fn2<T>& fn)const {
+        assert(dim == rhs.dim);
         Self ans(dim);
         for(size_t i = 0; i < dim; i++)
           ans[i] = fn(data[i],rhs[i]);
@@ -102,6 +104,7 @@ namespace ML {
       }
 
       T fold(const Self &rhs, const Fn3<T>& fn, T accum)const {
+        assert(dim == rhs.dim);
         for(size_t i = 0; i < dim; i++)
           accum = fn(data[i],rhs[i],accum);
         return accum;
@@ -152,10 +155,10 @@ namespace ML {
       Self operator-(const Self &o) { return sub(o); }
       Self operator*(const Self &o) { return mul(o); }
       Self operator/(const Self &o) { return div(o); }
-      Self operator*(const T o) { return mul(o); }
-      Self operator/(const T o) { return mul(1.0 / o); }
-      Self operator+(const T o) { return add(o); }
-      Self operator-(const T o) { return add(0 - o); }
+      Self operator*(const T o)     { return mul(o); }
+      Self operator/(const T o)     { return mul(1.0 / o); }
+      Self operator+(const T o)     { return add(o); }
+      Self operator-(const T o)     { return add(0 - o); }
 
       Self& operator=(const Self &o) {
         data = o.data;
@@ -164,7 +167,7 @@ namespace ML {
       }
 
       bool operator==(const Self &o) {
-        return dim == o.dim && dim == (size_t)fold(o,[&](T a, T b, T c)
+        return dim == (size_t)fold(o,[&](T a, T b, T c)
           { return c + static_cast<T>(a == b ? 1: 0); },
           static_cast<T>(0));
       }

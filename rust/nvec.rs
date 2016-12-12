@@ -21,6 +21,7 @@ impl MlVec {
     }
 
     fn fold2<F:Fn(f64,f64,f64)->f64> (&self, rhs:&Self, f:F, mut accum:f64) -> f64 {
+        assert!(self.len() == rhs.len());
         for i in 0..self.len() {
             accum = f(self.data[i],rhs[i], accum);
         }
@@ -36,6 +37,7 @@ impl MlVec {
     }
 
     fn map2<F:Fn(f64,f64)->f64> (&self, rhs:&Self, f:F) -> Self {
+        assert!(self.len() == rhs.len());
         let mut ans = MlVec{ data: vec![0f64;self.len()] };
         for i in 0..self.len() {
             ans[i] = f(self.data[i],rhs[i]);
@@ -192,13 +194,13 @@ fn main() {
         else                   {3.0}
     };
 
-    let r_a:Vec<f64> = vec!(a,b,c);
-    let r_b:Vec<f64> = vec!(b,c,d);
+    let lb:Vec<f64> = vec!(a,b,c);
+    let rb:Vec<f64> = vec!(b,c,d);
 
-    let split3 = |val:f64| {
+    let split3 = |val| {
         let mut num = 0.0;
-        for i in 0..r_a.len() {
-            if bound(r_a[i],r_b[i],val) 
+        for i in 0..lb.len() {
+            if bound(lb[i],rb[i],val) 
                 { return num; }
             else 
                 { num += 1.0; }
@@ -207,7 +209,7 @@ fn main() {
     };
 
     /* Example use of Map function to discretize a continuous valued vector
-       using functions of different forms apply the same transformation. */
+       using functions of different forms to apply the same transformation. */
     let test     = MlVec::new(vec!(27.24,14.1111,2.79,7.83,9.853));
     let expected = MlVec::new(vec!(3.0,2.0,0.0,1.0,1.0));
 
